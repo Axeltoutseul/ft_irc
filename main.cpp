@@ -1,7 +1,5 @@
 #include "ft_irc.hpp"
 
-voiid get_arg()
-
 int valid_password(const char *av)
 {
     if (std::strlen(av) < 8)
@@ -26,10 +24,10 @@ int main(int argc, char **argv)
         std::cerr << "Error: You must have one argument." << std::endl;
         return -1;
     }
-
-    if (!valid_password(argv[1]))
-        return -1;
-    /*if (std::strcmp(argv[1], "Voici_1_exemple") != 0)
-        std::cout << "Bad Password..." << std::endl;*/
+    t_env *env = init_env(argv);
+    create_server(env->port);
+    /*if (!valid_password(argv[1]))
+        return -1;*/
+    std::cout << env->port << std::endl;
     return 0;
 }
