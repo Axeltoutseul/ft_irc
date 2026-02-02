@@ -1,5 +1,6 @@
 #include "ft_irc.hpp"
 
+
 int valid_password(const char *av)
 {
     if (std::strlen(av) < 8)
@@ -19,15 +20,15 @@ int valid_password(const char *av)
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
+    if (argc != 3)
     {
-        std::cerr << "Error: You must have one argument." << std::endl;
+        std::cerr << "Error: You must have two arguments: an ID and a password, for example : 4040 new_server" << std::endl;
         return -1;
     }
-    t_env *env = init_env(argv);
-    create_server(env->port);
-    /*if (!valid_password(argv[1]))
-        return -1;*/
-    std::cout << env->port << std::endl;
+    if (!is_digit(argv[1]))
+    {
+        std::cerr << "Error: The ID must have only digits" << std::endl;
+        return -1;
+    }
     return 0;
 }

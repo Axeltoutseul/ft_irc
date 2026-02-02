@@ -9,7 +9,6 @@ RM = rm -rf
 OBJS_DIR = objects/
 
 SRCS =	main.cpp \
-		server.cpp \
 		string_utils.cpp
 
 OBJS = $(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))
