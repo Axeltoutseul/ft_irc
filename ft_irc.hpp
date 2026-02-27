@@ -2,15 +2,11 @@
 #define FT_IRC_HPP
 #include <iostream>
 #include <bits/stdc++.h>
-#include <termios.h>
+#include <cstdlib>
+#include <unistd.h>
 #include <sys/socket.h>
-#include "bircd/bircd.h"
+#include <netinet/in.h>
 
 int is_digit(const char *av);
-int count_digits(const char *av);
-int count_uppercase(const char *av);
-int count_lowercase(const char *av);
-int count_special(const char *av);
-void get_arg();
 
 #endif
