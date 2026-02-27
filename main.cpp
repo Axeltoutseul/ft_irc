@@ -13,8 +13,8 @@ int main(int argc, char **argv)
         return -1;
     }
     std::stringstream ss(argv[1]);
-    int nb;
-    ss >> nb;
-    std::cout << "port = " << nb << ", password = " << argv[2] << std::endl;
+    int port;
+    ss >> port;
+    create_server(port);
     return 0;
 }

@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 
+void create_server(int port);
 int is_digit(const char *av);
 
 #endif
