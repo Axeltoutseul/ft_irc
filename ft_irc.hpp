@@ -13,5 +13,7 @@
 
 void create_server(int port);
 int is_digit(const char *av);
+int is_in_charset(int carac, const std::string charset);
+int valid_nickname(const std::string nickname);
 
 #endif
