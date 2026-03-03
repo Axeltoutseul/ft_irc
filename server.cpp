@@ -45,9 +45,21 @@ void create_server(int port)
             buffer[matches[1].rm_eo] = 0;
             const char *url_encoded_file_name = buffer + matches[1].rm_so;
             char *file_name = url_decode(url_encoded_file_name);
+            char file_ext[32];
+            std::strcpy(file_ext, get_file_extension(file_name));
+            char *response = new char[400];
+            size_t response_len;
+            build_http_response(file_name, file_ext, response, &response_len);
+            send(client_fd, response, response_len, 0);
+            free(response);
+            free(file_name);
         }
         regfree(&regex);
     }
+    close(client_fd);
+    free(arg);
+    free(buffer);
+    return NULL;
 }
 
 void handle_client(int server_fd)
