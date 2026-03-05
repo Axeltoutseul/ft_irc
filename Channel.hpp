@@ -2,6 +2,8 @@
 #define CHANNEL_HPP
 
 #include "Client.hpp"
+#include <iostream>
+#include <bits/stdc++.h>
 #include <vector>
 
 class Channel
@@ -9,6 +11,7 @@ class Channel
     public :
         Channel();
         ~Channel();
+        void execCommand(const std::string command);
 
         std::vector<Client *> _operator;
         std::vector<Client *> _users;

@@ -1,6 +1,8 @@
 #include "Server.hpp"
+#include "Channel.hpp"
+#include <iostream>
 
-int main(void)
+/*int main(void)
 {
     Server serv;
 
@@ -16,4 +18,13 @@ int main(void)
         // Run through connections looking for data to read
         serv.process_connections(serv.listener, &serv.fd_count, &serv.fd_size, &serv.pfds);
     }
+}*/
+
+int main(int argc, char **argv)
+{
+    if (argc != 2)
+        return 1;
+    Channel new_chan;
+    new_chan.execCommand(argv[1]);
+    return 0;
 }

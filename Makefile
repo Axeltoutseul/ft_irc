@@ -1,5 +1,6 @@
 NAME		= ircserv
-SRCS		= main.cpp \
+SRCS		= Channel.cpp \
+			main.cpp \
 			parsing.cpp \
 			Server.cpp \
 				
