@@ -1,4 +1,4 @@
-#include "ft_irc.hpp"
+#include "Server.hpp"
 
 int is_digit(const char *av)
 {

@@ -1,41 +1,49 @@
-CC = c++
+NAME		= ircserv
+SRCS		= main.cpp \
+			parsing.cpp \
+			Server.cpp \
+				
+				
+LIBS		= 
 
-CXXFLAGS = -Wall -Wextra -Werror -MMD -MP -g -std=c++98
+SRC_DIR		= .
+LIB_DIR		= ./lib
+BUILD_DIR	= ./build
 
-NAME = ircserv
+CC			= c++
+CFLAGS		= -g -Wall -Werror -Wextra -MMD -MP -std=c++98
+INCLUDE_OBJ	= ${addprefix -I,${LIBS_DIR}}
+INCLUDE_SRC	= ${addprefix -L,${LIBS_DIR}}
 
-RM = rm -rf
+SRC			= ${addprefix ${BUILD_DIR}/,${SRCS}}
+LIBS_DIR	= ${addprefix ${LIB_DIR}/,${LIBS}}
+OBJ			= ${SRC:.cpp=.o}
+DPS			= ${SRC:.o=.d}
+UNAME_S		= $(shell uname -s)
 
-OBJS_DIR = objects/
+all: ${NAME}
 
-SRCS =	main.cpp \
-		server.cpp \
-		string_utils.cpp
+${NAME}: ${BUILD_DIR} ${OBJ}
+	$(CC) $(CFLAGS) ${OBJ} ${INCLUDE_SRC} -o ${NAME}
 
-OBJS = $(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))
+${BUILD_DIR}:
+	mkdir -p ${BUILD_DIR}
 
-DEPS = $(OBJS:.o=.d)
+${BUILD_DIR}/%.o:${SRC_DIR}/%.cpp
+	$(CC) $(CFLAGS) ${INCLUDE_OBJ} -c -o $@ $^
 
-$(NAME): $(OBJS)
-	$(CC) $(CXXFLAGS) $(OBJS) -o $(NAME)
-
-all: $(NAME)
-
-$(OBJS_DIR):
-	mkdir -p $(OBJS_DIR)
-
-$(OBJS_DIR)%.o: %.cpp | $(OBJS_DIR)
-	$(CC) $(CXXFLAGS) -o $@ -c $<
+archive: ${BUILD_DIR}
+	ar -rc ${NAME}.a ${OBJ}
 
 clean:
-	$(RM) $(OBJS)
-	$(RM) $(OBJS_DIR)
+	rm -rf ${BUILD_DIR}
 
 fclean: clean
-	$(RM) $(NAME)
+	rm -f ${NAME}
+	rm -f ${NAME}.a
 
 re: fclean all
 
--include $(DEPS)
+-include $(DPS)
 
-.PHONY: all clean fclean re
+.PHONY: clean fclean re archive

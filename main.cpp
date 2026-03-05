@@ -1,35 +1,19 @@
-#include "ft_irc.hpp"
+#include "Server.hpp"
 
-void check_port(const char *arg)
+int main(void)
 {
-    if (!is_digit(arg))
-    {
-        std::cerr << "Error: The ID must have only digits" << std::endl;
-        exit(1);
-    }
-    std::stringstream ss(arg);
-    int port;
-    ss >> port;
-    create_server(port);
-}
+    Server serv;
 
-int main(int argc, char **argv)
-{
-    if (argc != 3)
-    {
-        std::cerr << "Error: You must have two arguments: an ID and a password, for example : 4040 new_server" << std::endl;
-        return -1;
+
+    for(;;) {
+        int poll_count = poll(serv.pfds, serv.fd_count, -1);
+
+        if (poll_count == -1) {
+            perror("poll");
+            exit(1);
+        }
+
+        // Run through connections looking for data to read
+        serv.process_connections(serv.listener, &serv.fd_count, &serv.fd_size, &serv.pfds);
     }
-    check_port(argv[1]);
-    std::string nickname;
-    std::cout << "What's your nickname ? ";
-    std::getline(std::cin, nickname);
-    while (!valid_nickname(nickname))
-    {
-        std::cout << "You must enter a valid name." << std::endl;
-        std::cout << "What's your nickname ? ";
-        std::getline(std::cin, nickname);
-    }
-    std::cout << "Your name is " << nickname << std::endl;
-    return 0;
 }
