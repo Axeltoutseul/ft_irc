@@ -11,6 +11,8 @@ void Channel::execCommand(const std::string command)
 
     while (iss >> line)
         elements.push_back(line);
+    if (elements.size() == 0 || elements.size() > 2)
+        return;
 
     if (elements[0] == "INVITE")
         std::cout << "Invite command" << std::endl;

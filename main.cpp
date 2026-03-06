@@ -20,11 +20,20 @@
     }
 }*/
 
-int main(int argc, char **argv)
+int main()
 {
-    if (argc != 2)
-        return 1;
-    Channel new_chan;
-    new_chan.execCommand(argv[1]);
+    Server new_server;
+    Client client;
+    std::string nickname;
+    std::string username;
+    std::cout << "What's your nickname ? ";
+    std::getline(std::cin, nickname);
+    std::cout << "What's your username ? ";
+    std::getline(std::cin, username);
+    client.setNick(nickname);
+    client.setUser(username);
+    new_server.addClient(client);
+    std::cout << new_server.clients.size() << std::endl;
+    std::cout << "Client : " << new_server.clients[0]->getNick() << ", " << new_server.clients[0]->getUser() << "." << std::endl;
     return 0;
 }

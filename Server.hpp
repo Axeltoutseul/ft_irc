@@ -31,6 +31,8 @@ class Server
         void handle_new_connection(int listener, int *fd_count, int *fd_size, struct pollfd **pfds);
         void handle_client_data(int listener, int *fd_count, struct pollfd *pfds, int *pfd_i);
         void process_connections(int listener, int *fd_count, int *fd_size, struct pollfd **pfds);
+
+        void addClient(Client &new_client);
         
 
         int listener;
