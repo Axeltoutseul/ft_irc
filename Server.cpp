@@ -217,7 +217,7 @@ void Server::process_connections(int listener, int *fd_count, int *fd_size,
     }
 }
 
-void Server::addClient(Client &new_client)
+void Server::addClient(const Client &new_client)
 {
-    clients.push_back(&new_client);
+    clients.push_back(new_client);
 }
