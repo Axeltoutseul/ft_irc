@@ -117,7 +117,7 @@ void Server::add_to_pfds(struct pollfd **pfds, int newfd, int *fd_count,
  */
 void Server::del_from_pfds(struct pollfd pfds[], int i, int *fd_count)
 {
-    // Copy the one from the end over this one
+    // Copy the one from the end over this one  
     pfds[i] = pfds[*fd_count-1];
 
     (*fd_count)--;

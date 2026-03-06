@@ -12,7 +12,9 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <poll.h>
-#define PORT "9034"
+#include <vector>
+#define PORT "6667"
+#include "Client.hpp"
 
 class Server
 {
@@ -35,6 +37,7 @@ class Server
         int fd_size;
         int fd_count;
         struct pollfd *pfds;
+        std::vector<Client *> clients;
 
     private :
         std::string _name;
@@ -43,6 +46,5 @@ class Server
 int is_digit(const char *av);
 int is_in_charset(int carac, const std::string charset);
 int valid_nickname(const std::string nickname);
-
 
 #endif
