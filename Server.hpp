@@ -33,6 +33,7 @@ class Server
         void process_connections(int listener, int *fd_count, int *fd_size, struct pollfd **pfds);
 
         void addClient(const Client &new_client);
+        void removeClient(const std::string username);
         
 
         int listener;

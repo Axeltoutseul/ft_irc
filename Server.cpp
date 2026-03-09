@@ -221,3 +221,12 @@ void Server::addClient(const Client &new_client)
 {
     clients.push_back(new_client);
 }
+
+void Server::removeClient(const std::string username)
+{
+    std::vector<Client>::iterator it = clients.begin();
+    while (it != clients.end() && it->getUser() != username)
+        it++;
+    if (it != clients.end())
+        clients.erase(it);
+}
