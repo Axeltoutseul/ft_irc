@@ -15,6 +15,7 @@
 #include <iostream>
 #include <vector>
 #define PORT "6667"
+#include "Channel.hpp"
 #include "Client.hpp"
 
 class Server

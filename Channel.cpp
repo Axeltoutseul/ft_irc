@@ -40,3 +40,13 @@ void Channel::execCommand(const std::string command)
     else
         return;
 }
+
+bool Channel::is_in_list(const std::string username)
+{
+    std::vector<Client>::iterator it = _users.begin();
+    while (it != _users.end() && it->getUser() != username)
+        it++;
+    if (it != _users.end())
+        return true;
+    return false;
+}

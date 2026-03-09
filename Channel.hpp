@@ -12,11 +12,12 @@ class Channel
         Channel();
         ~Channel();
         void execCommand(const std::string command);
+        bool is_in_list(const std::string username);
 
-        std::vector<Client *> _operator;
-        std::vector<Client *> _users;
-        std::vector<Client *> _invite;
-        std::vector<Client *> _voice;
+        std::vector<Client> _operator;
+        std::vector<Client> _users;
+        std::vector<Client> _invite;
+        std::vector<Client> _voice;
     private :
 };
 
