@@ -126,6 +126,25 @@ void Server::del_from_pfds(struct pollfd pfds[], int i, int *fd_count)
 /*
  * Handle incoming connections.
  */
+
+void Server::get_new_client_data()
+{
+    std::string nickname;
+    std::string username;
+    Client client;
+
+    std::cout << "What's your nickname ? ";
+    std::getline(std::cin, nickname);
+    while (!valid_nickname(nickname))
+        std::cout << "You must enter a valid nickname" << std::endl;
+    std::cout << "What's your username ? ";
+    std::getline(std::cin, username);
+    client.setNick(nickname);
+    client.setUser(username);
+    client.setStateRegister(true); 
+    addClient(client);
+}
+
 void Server::handle_new_connection(int listener, int *fd_count,
         int *fd_size, struct pollfd **pfds)
 {
@@ -147,6 +166,8 @@ void Server::handle_new_connection(int listener, int *fd_count,
                 inet_ntop2(&remoteaddr, remoteIP, sizeof remoteIP),
                 newfd);
     }
+    get_new_client_data();
+    std::cout << "Size = " << clients.size() << std::endl;
 }
 
 /*
@@ -229,4 +250,6 @@ void Server::removeClient(const std::string username)
         it++;
     if (it != clients.end())
         clients.erase(it);
+    else
+        std::cerr << "client " << username << " doesn't exist.";
 }
