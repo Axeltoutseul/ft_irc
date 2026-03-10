@@ -35,7 +35,7 @@ class Server
         void process_connections(int listener, int *fd_count, int *fd_size, struct pollfd **pfds);
 
         void addClient(const Client &new_client);
-        void removeClient(const std::string username);
+        void removeClient(const std::string nickname);
         
 
         int listener;
@@ -48,9 +48,9 @@ class Server
         std::string _name;
 };
 
-int is_digit(const char *av);
-int is_in_charset(int carac, const std::string charset);
-int nickname_in_list(const std::string nickname, std::vector<Client> clients);
-int valid_nickname(const std::string nickname);
+bool is_digit(const char *av);
+bool is_in_charset(int carac, const std::string charset);
+bool nickname_in_list(const std::string nickname, std::vector<Client> clients);
+bool valid_nickname(const std::string nickname);
 
 #endif

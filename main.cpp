@@ -58,8 +58,8 @@ int main(void)
 
 
     std::cout << std::endl << std::endl << "Withdraw a user : ";
-    std::getline(std::cin, username);
-    new_server.removeClient(username);
+    std::getline(std::cin, nickname);
+    new_server.removeClient(nickname);
 
 
     std::cout << new_server.clients.size() << std::endl;

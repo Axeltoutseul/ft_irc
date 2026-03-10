@@ -250,13 +250,13 @@ void Server::addClient(const Client &new_client)
     clients.push_back(new_client);
 }
 
-void Server::removeClient(const std::string username)
+void Server::removeClient(const std::string nickname)
 {
     std::vector<Client>::iterator it = clients.begin();
-    while (it != clients.end() && it->getUser() != username)
+    while (it != clients.end() && it->getNick() != nickname)
         it++;
     if (it != clients.end())
         clients.erase(it);
     else
-        std::cerr << "client " << username << " doesn't exist.";
+        std::cerr << "client " << nickname << " doesn't exist." << std::endl;
 }
