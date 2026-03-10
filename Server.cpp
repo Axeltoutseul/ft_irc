@@ -3,13 +3,14 @@
 Server::Server() {
     fd_size = 5;
     fd_count = 0;
-    pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
+    //pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
+    pfds = new pollfd[fd_size];
 
     // Set up and get a listening socket
     listener = get_listener_socket();
 
     if (listener == -1) {
-        fprintf(stderr, "error getting listening socket\n");
+        std::cerr << "error getting listening socket" << std::endl;
         exit(1);
     }
 
@@ -19,12 +20,12 @@ Server::Server() {
     pfds[0].events = POLLIN;
 
     fd_count = 1; // For the listener
-
-    puts("pollserver: waiting for connections...");
+    std::cout << "pollserver: waiting for connections..." << std::endl;
 }
 
 Server::~Server() {
-    free(pfds);
+    //free(pfds);
+    delete[] pfds;
 }
 
 const char *Server::inet_ntop2(void *addr, char *buf, size_t size)
@@ -64,7 +65,7 @@ int Server::get_listener_socket(void)
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
     if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) {
-        fprintf(stderr, "pollserver: %s\n", gai_strerror(rv));
+        std::cerr << "pollserver: " << gai_strerror(rv) << std::endl;
         exit(1);
     }
     for(p = ai; p != NULL; p = p->ai_next) {
@@ -191,9 +192,9 @@ void Server::handle_client_data(int listener, int *fd_count,
     if (nbytes <= 0) { // Got error or connection closed by client
         if (nbytes == 0) {
             // Connection closed
-            printf("pollserver: socket %d hung up\n", sender_fd);
+            std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl;
         } else {
-            perror("recv");
+            std::cerr << "recv";
         }
 
         close(pfds[*pfd_i].fd); // Bye!
