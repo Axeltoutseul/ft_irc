@@ -50,6 +50,7 @@ class Server
 
 int is_digit(const char *av);
 int is_in_charset(int carac, const std::string charset);
+int nickname_in_list(const std::string nickname, std::vector<Client> clients);
 int valid_nickname(const std::string nickname);
 
 #endif

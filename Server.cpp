@@ -137,6 +137,12 @@ void Server::get_new_client_data()
     std::getline(std::cin, nickname);
     while (!valid_nickname(nickname))
         std::cout << "You must enter a valid nickname" << std::endl;
+    while (nickname_in_list(nickname, clients))
+    {
+        std::cout << "The nickname " << nickname << " is already taken." << std::endl;
+        std::cout << "What's your nickname ? ";
+        std::getline(std::cin, nickname);
+    }
     std::cout << "What's your username ? ";
     std::getline(std::cin, username);
     client.setNick(nickname);
