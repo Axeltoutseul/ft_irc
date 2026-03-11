@@ -1,8 +1,33 @@
 #include "Server.hpp"
 
-Server::Server() {
+/*Server::Server() {
     fd_size = 5;
     fd_count = 0;
+    //pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
+    pfds = new pollfd[fd_size];
+
+    // Set up and get a listening socket
+    listener = get_listener_socket();
+
+    if (listener == -1) {
+        std::cerr << "error getting listening socket" << std::endl;
+        exit(1);
+    }
+
+    // Add the listener to set;
+    // Report ready to read on incoming connection
+    pfds[0].fd = listener;
+    pfds[0].events = POLLIN;
+
+    fd_count = 1; // For the listener
+    std::cout << "pollserver: waiting for connections..." << std::endl;
+}*/
+
+Server::Server(const char *port, const char *password) {
+    fd_size = 5;
+    fd_count = 0;
+    _port = port;
+    _password = password;
     //pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
     pfds = new pollfd[fd_size];
 
@@ -64,7 +89,7 @@ int Server::get_listener_socket(void)
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
-    if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) {
+    if ((rv = getaddrinfo(NULL, _port.c_str(), &hints, &ai)) != 0) {
         std::cerr << "pollserver: " << gai_strerror(rv) << std::endl;
         exit(1);
     }
@@ -132,23 +157,39 @@ void Server::get_new_client_data()
 {
     std::string nickname;
     std::string username;
+    std::string pass;
     Client client;
 
     std::cout << "What's your nickname ? ";
     std::getline(std::cin, nickname);
     while (!valid_nickname(nickname))
-        std::cout << "You must enter a valid nickname" << std::endl;
+    {
+        std::cout << "You must enter a valid nickname" << std::endl << "What's your nickname ? ";
+        std::getline(std::cin, nickname);
+    }
     while (nickname_in_list(nickname, clients))
     {
-        std::cout << "The nickname " << nickname << " is already taken." << std::endl;
-        std::cout << "What's your nickname ? ";
+        std::cout << "The nickname " << nickname << " is already taken." << std::endl << "What's your nickname ? ";
         std::getline(std::cin, nickname);
     }
     std::cout << "What's your username ? ";
     std::getline(std::cin, username);
+    while (!username[0])
+    {
+        std::cout << "The username can't be empty" << std::endl << "What's your username ? ";
+        std::getline(std::cin, username);
+    }
     client.setNick(nickname);
     client.setUser(username);
-    client.setStateRegister(true); 
+    std::cout << "What's the server password ? ";
+    std::getline(std::cin, pass);
+    while (pass != _password)
+    {
+        std::cout << "Incorrect password... " << std::endl << "What's the server password ? ";
+        std::getline(std::cin, pass);
+    }
+    client.setStatePass(true);
+    client.setStateRegister(true);
     addClient(client);
 }
 

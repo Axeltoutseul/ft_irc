@@ -14,14 +14,15 @@
 #include <poll.h>
 #include <iostream>
 #include <vector>
-#define PORT "6667"
+//#define PORT "6667"
 #include "Channel.hpp"
 #include "Client.hpp"
 
 class Server
 {
     public :
-        Server();
+        //Server();
+        Server(const char *port, const char *password);
         ~Server();
 
         const char *inet_ntop2(void *addr, char *buf, size_t size);
@@ -41,6 +42,8 @@ class Server
         int listener;
         int fd_size;
         int fd_count;
+        std::string _port;
+        std::string _password;
         struct pollfd *pfds;
         std::vector<Client> clients;
 

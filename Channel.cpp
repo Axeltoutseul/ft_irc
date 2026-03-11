@@ -30,9 +30,9 @@ void Channel::execCommand(const std::string command)
             std::cout << "Restrictions of the Topic" << std::endl;
         else if (elements[1] == "-k")
             std::cout << "Channel key" << std::endl;
-        else if (elements[1] == "-k")
+        else if (elements[1] == "-o")
             std::cout << "Channel operator privilege" << std::endl;
-        else if (elements[1] == "-u")
+        else if (elements[1] == "-l")
             std::cout << "User limit to channel" << std::endl;
         else
             return;
