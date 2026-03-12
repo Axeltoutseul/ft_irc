@@ -1,13 +1,9 @@
 #include "Server.hpp"
-#include "Channel.hpp"
-#include <iostream>
 
-int main(int argc, char **argv)
+int main(void)
 {
-    if (argc != 3)
-        return 1;
+    Server serv;
 
-    Server serv(argv[1], argv[2]);
 
     for(;;) {
         int poll_count = poll(serv.pfds, serv.fd_count, -1);

@@ -1,16 +1,15 @@
 #include "Server.hpp"
 
-/*Server::Server() {
+Server::Server() {
     fd_size = 5;
     fd_count = 0;
-    //pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
-    pfds = new pollfd[fd_size];
+    pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
 
     // Set up and get a listening socket
     listener = get_listener_socket();
 
     if (listener == -1) {
-        std::cerr << "error getting listening socket" << std::endl;
+        fprintf(stderr, "error getting listening socket\n");
         exit(1);
     }
 
@@ -20,37 +19,12 @@
     pfds[0].events = POLLIN;
 
     fd_count = 1; // For the listener
-    std::cout << "pollserver: waiting for connections..." << std::endl;
-}*/
 
-Server::Server(const char *port, const char *password) {
-    fd_size = 5;
-    fd_count = 0;
-    _port = port;
-    _password = password;
-    //pfds = (pollfd *)malloc(sizeof *pfds * fd_size);
-    pfds = new pollfd[fd_size];
-
-    // Set up and get a listening socket
-    listener = get_listener_socket();
-
-    if (listener == -1) {
-        std::cerr << "error getting listening socket" << std::endl;
-        exit(1);
-    }
-
-    // Add the listener to set;
-    // Report ready to read on incoming connection
-    pfds[0].fd = listener;
-    pfds[0].events = POLLIN;
-
-    fd_count = 1; // For the listener
-    std::cout << "pollserver: waiting for connections..." << std::endl;
+    puts("pollserver: waiting for connections...");
 }
 
 Server::~Server() {
-    //free(pfds);
-    delete[] pfds;
+    free(pfds);
 }
 
 const char *Server::inet_ntop2(void *addr, char *buf, size_t size)
@@ -89,8 +63,8 @@ int Server::get_listener_socket(void)
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
-    if ((rv = getaddrinfo(NULL, _port.c_str(), &hints, &ai)) != 0) {
-        std::cerr << "pollserver: " << gai_strerror(rv) << std::endl;
+    if ((rv = getaddrinfo(NULL, PORT, &hints, &ai)) != 0) {
+        fprintf(stderr, "pollserver: %s\n", gai_strerror(rv));
         exit(1);
     }
     for(p = ai; p != NULL; p = p->ai_next) {
@@ -157,7 +131,6 @@ void Server::get_new_client_data()
 {
     std::string nickname;
     std::string username;
-    std::string pass;
     Client client;
 
     std::cout << "What's your nickname ? ";
@@ -181,15 +154,7 @@ void Server::get_new_client_data()
     }
     client.setNick(nickname);
     client.setUser(username);
-    std::cout << "What's the server password ? ";
-    std::getline(std::cin, pass);
-    while (pass != _password)
-    {
-        std::cout << "Incorrect password... " << std::endl << "What's the server password ? ";
-        std::getline(std::cin, pass);
-    }
-    client.setStatePass(true);
-    client.setStateRegister(true);
+    client.setStateRegister(true); 
     addClient(client);
 }
 
@@ -215,7 +180,7 @@ void Server::handle_new_connection(int listener, int *fd_count,
                 newfd);
     }
     get_new_client_data();
-    std::cout << "Size = " << clients.size() << std::endl;
+    //std::cout << "Size = " << clients.size() << std::endl;
 }
 
 /*
@@ -233,9 +198,9 @@ void Server::handle_client_data(int listener, int *fd_count,
     if (nbytes <= 0) { // Got error or connection closed by client
         if (nbytes == 0) {
             // Connection closed
-            std::cout << "pollserver: socket " << sender_fd << " hung up" << std::endl;
+            printf("pollserver: socket %d hung up\n", sender_fd);
         } else {
-            std::cerr << "recv";
+            perror("recv");
         }
 
         close(pfds[*pfd_i].fd); // Bye!
@@ -246,6 +211,23 @@ void Server::handle_client_data(int listener, int *fd_count,
         (*pfd_i)--;
 
     } else { // We got some good data from a client
+
+        // parse message into struct Message
+        Message *parsed_msg = parseMessage(buf);
+        printf("command > %s\n", parsed_msg->command);
+        for (int i = 0; parsed_msg->params[i] != NULL; i++) {
+            printf("params %d > %s\n", i, parsed_msg->params[i]);
+        }
+
+        //check if client is accepted in IRC server
+        for (size_t i = 0; i < clients.size(); i++) {
+            if (sender_fd == clients[i].getFd()) {
+                if (clients[i].getStateRegister() == false) {
+                    // clients.h
+                }
+            }
+        }
+
         printf("pollserver: recv from fd %d: %.*s", sender_fd,
                 nbytes, buf);
         // Send to everyone!
@@ -300,4 +282,49 @@ void Server::removeClient(const std::string nickname)
         clients.erase(it);
     else
         std::cerr << "client " << nickname << " doesn't exist." << std::endl;
+}
+
+Message *parseMessage(char *in_msg)
+{
+    Message *message;
+
+    message = new Message;
+    message->prefix = NULL;
+    message->command = NULL;
+    // int j = 0;
+
+
+
+    printf("buf from recv()[%s]\n", in_msg);
+    char **tmp = ft_split_pattern(in_msg, "\r\n");
+    for (int i = 0; tmp[i] != NULL; i++)
+        printf("tmp %d >%s\n", i, tmp[i]);
+    // for (int i = 0; in_msg[i]; i++)
+    // {
+    //     if (in_msg[i] == ' ' && message->command == NULL) {
+    //         message->command = ft_substr(in_msg, j, (i - j));
+    //         j = i;
+    //     }
+    // }
+    //     message->params = ft_split(in_msg + j, ' ');
+    // printf("command > %s\n", message->command);
+    // for (int i = 0; message->params[i] != NULL; i++) {
+    //     printf("params %d > %s\n", i, message->params[i]);
+    // }
+
+    // for (int i = 0; message->params[i] != NULL; i++)
+    // {
+    //     if (message->params[i][0] == ':') {
+    //     char *tmp = NULL;
+    //         for (int k = i; message->params[k] != NULL; k++) {
+    //             tmp = ft_strjoin_irc(tmp, message->params[k]);
+    //        }
+    //        for (int k = i; message->params[k] != NULL; k++) {
+    //             free(message->params[k]);
+    //             message->params[k] = NULL;
+    //        }
+    //        message->params[i] = tmp;
+    //     }
+    // }
+    return (message);   
 }

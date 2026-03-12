@@ -4,6 +4,10 @@ Client::Client(): _password_ok(false), _registered(false) {}
 
 Client::~Client() {}
 
+void    Client::setFd(const int fd) {
+    _fd = fd;
+}
+
 void    Client::setNick(const std::string nick) {
     _nick = nick;
 }
@@ -24,6 +28,10 @@ void    Client::setStateRegister(const bool registered) {
     _registered = registered;
 }
 
+int           Client::getFd() {
+    return (_fd);
+}
+
 const std::string   Client::getNick() {
     return (_nick);
 }
@@ -36,9 +44,15 @@ const struct pollfd   *Client::getPfd() {
     return (_pfd);
 }
 
-bool  Client::getStatePass() const {
+bool  Client::getStatePass() {
     return (_password_ok);
 }
-bool  Client::getStateRegister() const {
+bool  Client::getStateRegister() {
     return (_registered);
+}
+
+bool Client::handleClientInfo(std::string in_msg) {
+    // char **msg = ft_split(in_msg.c_str(), ' ');
+    (void)in_msg;
+    return true;
 }
