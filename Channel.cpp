@@ -1,52 +1,51 @@
 #include "Channel.hpp"
 
-Channel::Channel() {}
+Channel::Channel(std::string name) : 
+    topic(""), inviteOnly(false), topicRestricted(false), userLimit(0), _name(name) {}
+
 Channel::~Channel() {}
 
-void Channel::execCommand(const std::string command)
-{
-    std::vector<std::string> elements;
-    std::istringstream iss(command);
-    std::string line;
-
-    while (iss >> line)
-        elements.push_back(line);
-    if (elements.size() == 0 || elements.size() > 2)
-        return;
-
-    if (elements[0] == "INVITE")
-        std::cout << "Invite command" << std::endl;
-    else if (elements[0] == "KICK")
-        std::cout << "Kick command" << std::endl;
-    else if (elements[0] == "TOPIC")
-        std::cout << "Topic command" << std::endl;
-    else if (elements[0] == "MODE")
-    {
-        if (elements.size() < 2)
-            return;
-        if (elements[1] == "-i")
-            std::cout << "Invite only channel" << std::endl;
-        else if (elements[1] == "-t")
-            std::cout << "Restrictions of the Topic" << std::endl;
-        else if (elements[1] == "-k")
-            std::cout << "Channel key" << std::endl;
-        else if (elements[1] == "-o")
-            std::cout << "Channel operator privilege" << std::endl;
-        else if (elements[1] == "-l")
-            std::cout << "User limit to channel" << std::endl;
-        else
-            return;
-    }
-    else
-        return;
+std::string Channel::getName() const {
+    return _name;
 }
 
-bool Channel::is_in_list(const std::string username)
+bool Channel::is_in_list(const Client *client, std::vector<Client *> client_list)
 {
-    std::vector<Client>::iterator it = _users.begin();
-    while (it != _users.end() && it->getUser() != username)
+    std::vector<Client *>::iterator it = client_list.begin();
+    while (it != client_list.end() && *it != client)
         it++;
-    if (it != _users.end())
+    if (it != client_list.end())
         return true;
     return false;
+}
+
+void Channel::removeFromChannel(const Client *client)
+{
+    std::vector<Client *>::iterator it = _users.begin();
+    std::vector<Client *>::iterator it2 = _operator.begin();
+    std::vector<Client *>::iterator it3 = _voice.begin();
+    while (it != _users.end() && *it != client)
+        it++;
+    if (it != _users.end())
+    {
+        while (it2 != _operator.end() && *it2 != client)
+            it2++;
+        while (it3 != _voice.end() && *it3 != client)
+            it3++;
+        if (it2 != _operator.end())
+            _operator.erase(it2);
+        if (it3 != _voice.end())
+            _voice.erase(it3);
+        _users.erase(it);
+    }
+}
+
+bool isChannelNameValid(const std::string channel_name)
+{
+    if (!is_in_charset(channel_name[0], "&#+!"))
+        return false;
+    for (size_t i = 1; i < channel_name.size(); i++)
+        if (channel_name[i] == ' ' || channel_name[i] == 7 || channel_name[i] == ',' || channel_name[i] == ':' || i > 50)
+            return false;
+    return true;
 }

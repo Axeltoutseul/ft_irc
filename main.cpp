@@ -1,73 +1,43 @@
 #include "Server.hpp"
 
-int main(void)
+static bool &get_running()
 {
-    Server serv;
+    static bool running = true;
+    return running;
+}
 
+void sig_handler(int sig)
+{
+    (void)sig;
+    get_running() = false;
+}
 
-    for(;;) {
+int main(int argc, char **argv)
+{
+    signal(SIGINT, sig_handler);
+    if (argc < 3)
+    {
+        std::cerr << "Usage: ./ircserv <port> <password>" << std::endl;
+        return 1;
+    }
+    int port = atoi(argv[1]);
+    if (port <= 1024 || port > 65535)
+    {
+        std::cerr << "Error: invalid port" << std::endl;
+        return 1;
+    }
+
+    Server serv(argv[1], argv[2]);
+
+    while (get_running()) {
         int poll_count = poll(serv.pfds, serv.fd_count, -1);
 
         if (poll_count == -1) {
-            perror("poll");
-            exit(1);
+            std::cerr << "poll failed" << std::endl;
+            break;
         }
 
         // Run through connections looking for data to read
         serv.process_connections(serv.listener, &serv.fd_count, &serv.fd_size, &serv.pfds);
     }
 }
-
-/*int main()
-{
-    Server new_server;
-    size_t i = 0;
-    std::string nickname;
-    std::string username;
-    Client client;
-    while (i < 3)
-    {
-        std::cout << "What's your nickname ? ";
-        std::getline(std::cin, nickname);
-        if (!valid_nickname(nickname))
-        {
-            std::cout << "You must enter a valid nickname" << std::endl;
-            continue;
-        }
-        std::cout << "What's your username ? ";
-        std::getline(std::cin, username);
-        client.setNick(nickname);
-        client.setUser(username);
-        new_server.addClient(client);
-        std::cout << std::endl;
-        i++;
-    }
-
-
-    std::cout << new_server.clients.size() << std::endl;
-    i = 0;
-    while (i < new_server.clients.size())
-    {
-        std::cout << new_server.clients[i].getUser();
-        if (i < new_server.clients.size() - 1)
-            std::cout << ", ";
-        i++;
-    }
-
-
-    std::cout << std::endl << std::endl << "Withdraw a user : ";
-    std::getline(std::cin, nickname);
-    new_server.removeClient(nickname);
-
-
-    std::cout << new_server.clients.size() << std::endl;
-    i = 0;
-    while (i < new_server.clients.size())
-    {
-        std::cout << new_server.clients[i].getUser();
-        if (i < new_server.clients.size() - 1)
-            std::cout << ", ";
-        i++;
-    }
-    return 0;
-}*/
